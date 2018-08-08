@@ -87,46 +87,12 @@ namespace WindowsDesktop
 			}
 		}
 
-		/// <summary>
-		/// Creates a virtual desktop.
-		/// </summary>
-		public static VirtualDesktop Create()
-		{
-			VirtualDesktopHelper.ThrowIfNotSupported();
-
-			var desktop = ComObjects.VirtualDesktopManagerInternal.CreateDesktopW();
-			var wrapper = _wrappers.GetOrAdd(desktop.GetID(), _ => new VirtualDesktop(desktop));
-
-			return wrapper;
-		}
-
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public static VirtualDesktop FromComObject(IVirtualDesktop desktop)
 		{
 			VirtualDesktopHelper.ThrowIfNotSupported();
 
 			var wrapper = _wrappers.GetOrAdd(desktop.GetID(), _ => new VirtualDesktop(desktop));
-			return wrapper;
-		}
-
-		/// <summary>
-		/// Returns the virtual desktop of the specified identifier.
-		/// </summary>
-		public static VirtualDesktop FromId(Guid desktopId)
-		{
-			VirtualDesktopHelper.ThrowIfNotSupported();
-
-			IVirtualDesktop desktop;
-			try
-			{
-				desktop = ComObjects.VirtualDesktopManagerInternal.FindDesktop(ref desktopId);
-			}
-			catch (COMException ex) when (ex.Match(HResult.TYPE_E_ELEMENTNOTFOUND))
-			{
-				return null;
-			}
-			var wrapper = _wrappers.GetOrAdd(desktop.GetID(), _ => new VirtualDesktop(desktop));
-
 			return wrapper;
 		}
 
